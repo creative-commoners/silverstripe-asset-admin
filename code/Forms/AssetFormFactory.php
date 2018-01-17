@@ -54,11 +54,6 @@ abstract class AssetFormFactory implements FormFactory
      */
     const TYPE_ADMIN = 'admin';
 
-    public function __construct()
-    {
-        $this->constructExtensions();
-    }
-
     /**
      * @param RequestHandler $controller
      * @param string $name
