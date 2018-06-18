@@ -179,7 +179,7 @@ class RemoteFileFormFactory implements FormFactory
 
         // Get embed
         $this->validateUrl($url);
-        $embed = new EmbedResource($url);
+        $embed = EmbedResource::create($url);
 
         // Build form
         $alignments = array(
