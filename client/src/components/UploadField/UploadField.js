@@ -474,6 +474,7 @@ class UploadField extends Component {
         onInsert={selectingItem ? this.handleReplace : this.handleAddInsert}
         onClosed={this.handleHide}
         onInsertMany={this.handleInsertMany}
+        onBrowse={() => null}
         maxFiles={selectingItem ? 1 : maxFiles}
         type="select"
         bodyClassName="modal__dialog"
