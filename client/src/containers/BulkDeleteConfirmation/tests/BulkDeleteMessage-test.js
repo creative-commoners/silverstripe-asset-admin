@@ -4,31 +4,35 @@ import React from 'react';
 import Component from '../BulkDeleteMessage';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
-const unlinkFileWarning = 'Ensure files are removed from content areas prior to deleting them, otherwise they will appear as broken links.';
-
-const noFoldersInUseProps = {
-  foldersInUse: { totalItems: 0, totalUsages: 0 },
+const noFoldersProps = {
+  folderDescendantFileTotals: { totalItems: 0, totalCount: 0 },
 };
 
-const oneFolderInUseProps = {
-  foldersInUse: { totalItems: 1, totalUsages: 1 },
+const oneFolderProps = {
+  folderDescendantFileTotals: { totalItems: 1, totalCount: 5 },
 };
 
-const manyFoldersInUseProps = {
-  foldersInUse: { totalItems: 2, totalUsages: 2 },
+const manyfolderProps = {
+  folderDescendantFileTotals: { totalItems: 2, totalCount: 10 },
 };
 
-const noFilesInUseProps = {
-  filesInUse: { totalItems: 0, totalUsages: 0 },
+const noFilesProps = {
+  fileTotalItems: 0,
 };
 
-const oneFileInUseProps = {
-  filesInUse: { totalItems: 1, totalUsages: 2 },
+const oneFileProps = {
+  fileTotalItems: 1,
 };
 
-const manyFilesInUseProps = {
-  filesInUse: { totalItems: 2, totalUsages: 3 },
+const manyFilesProps = {
+  fileTotalItems: 2,
 };
+
+const getMessage = (count) => [
+  `Warning: You're about to delete ${count} file(s) which may be used in your site's content.`,
+  'Please carefully check the file usage to ensure they are removed from the content areas',
+  'prior to deleting them, otherwise they will appear as broken links.'
+].join(' ');
 
 describe('BulkDeleteMessage', () => {
   const renderer = new ShallowRenderer();
@@ -37,18 +41,18 @@ describe('BulkDeleteMessage', () => {
     const testCases = [
       [
         'file in use',
-        { ...noFoldersInUseProps, ...oneFileInUseProps, itemCount: 2 },
-        '1 item(s) are currently in use in 2 place(s). Are you sure you want to delete them?',
+        { ...noFoldersProps, ...oneFileProps },
+        getMessage('1'),
       ],
       [
         'folder in use',
-        { ...noFilesInUseProps, ...oneFolderInUseProps, itemCount: 2 },
-        '1 item(s) are currently in use in 1 place(s). Are you sure you want to delete them?',
+        { ...noFilesProps, ...oneFolderProps },
+        getMessage('5'),
       ],
       [
         'file and folder in use',
-        { ...oneFileInUseProps, ...oneFolderInUseProps, itemCount: 2 },
-        '2 item(s) are currently in use in 3 place(s). Are you sure you want to delete them?',
+        { ...oneFileProps, ...oneFolderProps },
+        getMessage('6'),
       ],
     ];
 
@@ -56,8 +60,7 @@ describe('BulkDeleteMessage', () => {
       it(desc, () => {
         renderer.render(<Component {...props} />);
         const result = renderer.getRenderOutput();
-        expect(result.props.children.length).toEqual(2);
-        expect(result.props.children[0]).toEqual(
+        expect(result.props.children).toEqual(
           <p>{expectedMessage}</p>
         );
       });
@@ -68,13 +71,13 @@ describe('BulkDeleteMessage', () => {
     const testCases = [
       [
         'one folder in use',
-        { ...noFilesInUseProps, ...oneFolderInUseProps, itemCount: 1 },
-        'This folder contains file(s) that are currently used in 1 place(s). Are you sure you want to delete it?'
+        { ...noFilesProps, ...oneFolderProps },
+        getMessage('5'),
       ],
       [
         'multiple folders in use',
-        { ...noFilesInUseProps, ...manyFoldersInUseProps, itemCount: 2 },
-        '2 of these folders contain file(s) that are currently used in 2 place(s). Are you sure you want to delete them?'
+        { ...noFilesProps, ...manyfolderProps },
+        getMessage('10'),
       ],
     ];
 
@@ -82,8 +85,7 @@ describe('BulkDeleteMessage', () => {
       it(desc, () => {
         renderer.render(<Component {...props} />);
         const result = renderer.getRenderOutput();
-        expect(result.props.children.length).toEqual(2);
-        expect(result.props.children[0]).toEqual(
+        expect(result.props.children).toEqual(
           <p>{expectedMessage}</p>
         );
       });
@@ -94,13 +96,13 @@ describe('BulkDeleteMessage', () => {
     const testCases = [
       [
         'one file in use',
-        { ...noFoldersInUseProps, ...oneFileInUseProps, itemCount: 1 },
-        'This file is currently in use in 2 place(s). Are you sure you want to delete it?',
+        { ...noFoldersProps, ...oneFileProps },
+        getMessage('1'),
       ],
       [
         'many files in use',
-        { ...noFoldersInUseProps, ...manyFilesInUseProps, itemCount: 2 },
-        '2 of these files are currently used in 3 place(s). Are you sure you want to delete them?',
+        { ...noFoldersProps, ...manyFilesProps },
+        getMessage('2'),
       ]
     ];
 
@@ -108,37 +110,9 @@ describe('BulkDeleteMessage', () => {
       it(desc, () => {
         renderer.render(<Component {...props} />);
         const result = renderer.getRenderOutput();
-        expect(result.props.children).toEqual([
-          <p>{expectedMessage}</p>,
-          <p>{unlinkFileWarning}</p>
-        ]);
-      });
-    });
-  });
-
-  describe('Deleting items not in use', () => {
-    const testCases = [
-      [
-        'one item',
-        { ...noFoldersInUseProps, ...noFilesInUseProps, itemCount: 1 },
-        'Are you sure you want to delete this file/folder?',
-      ],
-      [
-        'many items',
-        { ...noFoldersInUseProps, ...noFilesInUseProps, itemCount: 2 },
-        'Are you sure you want to delete these files/folders?',
-      ]
-    ];
-
-
-    testCases.forEach(([desc, props, expectedMessage]) => {
-      it(desc, () => {
-        renderer.render(<Component {...props} />);
-        const result = renderer.getRenderOutput();
-        expect(result.props.children).toEqual([
-          <p>{expectedMessage}</p>,
-          false
-        ]);
+        expect(result.props.children).toEqual(
+          <p>{expectedMessage}</p>
+        );
       });
     });
   });

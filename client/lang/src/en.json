@@ -9,6 +9,7 @@
     "AssetAdmin.BULK_ACTIONS_DELETE_FOLDER": "These folders contain files which are currently in use, you must move or delete their contents before you can delete the folder.",
     "AssetAdmin.BULK_ACTIONS_DELETE_MULTI_CONFIRM": "There are %s files currently in use, are you sure you want to delete these files?",
     "AssetAdmin.BULK_ACTIONS_DELETE_SINGLE_CONFIRM": "This file is currently in use in %s places, are you sure you want to delete it?",
+    "AssetAdmin.BULK_ACTIONS_DELETE_ITEMS_CONFIRM": "Warning: You're about to delete %s file(s) which may be used in your site's content. Please carefully check the file usage to ensure they are removed from the content areas prior to deleting them, otherwise they will appear as broken links.",
     "AssetAdmin.BULK_ACTIONS_DELETE_SUCCESS": "%s folders/files were successfully archived.",
     "AssetAdmin.BULK_ACTIONS_PLACEHOLDER": "Select an action...",
     "AssetAdmin.CANCEL": "Cancel",
