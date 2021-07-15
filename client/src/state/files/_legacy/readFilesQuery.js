@@ -35,15 +35,18 @@ const apolloConfig = {
     // - Display a folder with its direct children and filters (a "search" in the current folder)
     const [sortField, sortDir] = params.sort ? params.sort.split(',') : ['', ''];
     const limit = params.limit || sectionConfig.limit;
+
+    const sortBy = (sortField && sortDir)
+      ? [{ field: 'isFolder', direction: 'DESC' }, { field: sortField, direction: sortDir.toUpperCase() }]
+      : [{ field: 'isFolder', direction: 'DESC' }];
+
     return {
       variables: {
         rootFilter,
         childrenFilter,
         limit,
         offset: ((params.page || 1) - 1) * limit,
-        sortBy: (sortField && sortDir)
-          ? [{ field: sortField, direction: sortDir.toUpperCase() }]
-          : undefined,
+        sortBy,
       },
     };
   },
